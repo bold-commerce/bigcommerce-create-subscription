@@ -1,53 +1,89 @@
-import {
-    BillingRules, BoldCommerceAddress, SubscriptionPayload, SubscriptionItem,
+import schema, {
+    BoldCommerceAddress, SubscriptionPayload, SubscriptionItem,
 } from '../interface/BoldCommerceInterface';
 import { BigCommerceOrder } from '../../bigcommerce/interface/BigCommerceInterface';
 import { Transaction } from '../../braintree/interface/BraintreeInterface';
 import Boldv2 from '../../api/boldv2';
+import { isAxiosError } from '../../../helpers/axios';
 
 class Subscriptions {
-    bold: any;
+    bold: Boldv2;
 
     constructor() {
         this.bold = new Boldv2();
     }
 
     async getBillingRules(groupId: string, intervalId: string, dateCreated: string) {
-        const { data, status, error } = await this.bold.get(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscription_groups/${groupId}`);
-        if (error) {
-            return { error, status };
+        try {
+            const { data } = await this.bold.get(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscription_groups/${groupId}`);
+            const subscriptionGroup = schema.subscriptionGroup.safeParse(data.subscription_group);
+            if (!subscriptionGroup.success) {
+                return {
+                    error: 'Could not parse subscription group',
+                    status: 500,
+                };
+            }
+
+            const billingRules = subscriptionGroup.data.billing_rules.find(
+                rule => rule.id === parseInt(intervalId, 10) && `${rule.subscription_group_id}` === `${groupId}`,
+            );
+
+            if (!billingRules) {
+                return {
+                    error: `Could not find subscription group for interval ID ${intervalId}`,
+                    status: 500,
+                };
+            }
+
+            const orderDate: Date = new Date(dateCreated);
+            const nextDate = ({
+                day: new Date(orderDate.setDate(orderDate.getDate() + 1)).toDateString(),
+                week: new Date(orderDate.setDate(orderDate.getDate() + 7)).toDateString(),
+                month: new Date(orderDate.setMonth(orderDate.getMonth() + 1)).toDateString(),
+                year: new Date(orderDate.setFullYear(orderDate.getFullYear() + 1)).toDateString(),
+            })[billingRules.interval_type] ?? '';
+
+            const createdDate = new Date(dateCreated).toISOString().split('T')[0];
+            const rruleDate = new Date(nextDate).toISOString().split('T')[0];
+            if (!rruleDate) {
+                throw new Error('RRule date not found');
+            }
+            const rrule = rruleDate.replace(/-/g, '');
+
+            return {
+                subscription_group_id: groupId,
+                interval_id: intervalId,
+                next_order_datetime: `${rruleDate}T08:00:00Z`,
+                last_order_datetime: `${createdDate}T08:00:00Z`,
+                order_rrule: `DTSTART:${rrule}T080000Z\nRRULE:${billingRules.billing_rule}`,
+            };
+        } catch (err) {
+            if (isAxiosError(err) && err.response) {
+                return {
+                    error: err.response?.data,
+                    status: err.response.status,
+                };
+            }
+
+            throw err;
         }
-        const billingRules: BillingRules = data.subscription_group.billing_rules.find((rule: any) => rule.id === parseInt(intervalId, 10) && rule.subscription_group_id === groupId);
-
-        const orderDate: Date = new Date(dateCreated);
-        const nextDate = ({
-            day: new Date(orderDate.setDate(orderDate.getDate() + 1)).toDateString(),
-            week: new Date(orderDate.setDate(orderDate.getDate() + 7)).toDateString(),
-            month: new Date(orderDate.setMonth(orderDate.getMonth() + 1)).toDateString(),
-            year: new Date(orderDate.setFullYear(orderDate.getFullYear() + 1)).toDateString(),
-        })[billingRules.interval_type] ?? '';
-
-        const createdDate = new Date(dateCreated).toISOString().split('T')[0];
-        const rruleDate = new Date(nextDate).toISOString().split('T')[0];
-        if (!rruleDate) {
-            throw new Error('RRule date not found');
-        }
-        const rrule = rruleDate.replace(/-/g, '');
-
-        return {
-            subscription_group_id: groupId,
-            interval_id: intervalId,
-            next_order_datetime: `${rruleDate}T08:00:00Z`,
-            last_order_datetime: `${createdDate}T08:00:00Z`,
-            order_rrule: `DTSTART:${rrule}T080000Z\nRRULE:${billingRules.billing_rule}`,
-        };
     }
 
-    async createSubscription(index: number, order: BigCommerceOrder, lineItems: SubscriptionItem[], billingAddress: BoldCommerceAddress, shippingAddress: BoldCommerceAddress, braintreeTransaction: Transaction) {
+    async createSubscription(
+        index: number,
+        order: BigCommerceOrder,
+        lineItems: SubscriptionItem[],
+        billingAddress: BoldCommerceAddress,
+        shippingAddress: BoldCommerceAddress,
+        braintreeTransaction: Transaction,
+    ) {
         try {
             const lineItem = lineItems[0];
             if (!lineItem) {
-                throw new Error('lineitems array is empty');
+                return {
+                    status: 422,
+                    error: 'line items array is empty',
+                };
             }
             const billingRules = await this.getBillingRules(lineItem.subscription_group_id, lineItem.interval_id, order.date_created);
 
@@ -58,7 +94,9 @@ class Subscriptions {
             if (billingRules.next_order_datetime === undefined || billingRules.last_order_datetime === undefined) {
                 throw new Error('date not found');
             }
-            const gatewayName = braintreeTransaction.paymentMethod.details.__typename === 'PayPalAccountDetails' ? 'Braintree Paypal' : 'Braintree Credit Card';
+            const gatewayName = braintreeTransaction.paymentMethod.details.__typename === 'PayPalAccountDetails'
+                ? 'Braintree Paypal'
+                : 'Braintree Credit Card';
 
             const body: SubscriptionPayload = {
                 customer: {
@@ -89,10 +127,17 @@ class Subscriptions {
                 },
             };
 
-            const { data, status, error } = await this.bold.post(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscriptions`, body);
-            const subscription: any = data;
-            return { subscription, status, error };
+            const { data, status } = await this.bold.post(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscriptions`, body);
+            const subscription: unknown = data;
+            return { subscription, status };
         } catch (error) {
+            if (isAxiosError(error) && error.response) {
+                return {
+                    error: error.response?.data,
+                    status: error.response.status,
+                };
+            }
+
             return error;
         }
     }
