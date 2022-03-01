@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-class Boldv2 {
+class BoldApiClient {
     private axios: AxiosInstance;
 
     constructor() {
@@ -44,4 +44,4 @@ class Boldv2 {
     }
 }
 
-export default Boldv2;
+export default BoldApiClient;

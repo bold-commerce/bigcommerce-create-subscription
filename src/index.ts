@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 
-import NewOrders from './controllers/new-orders';
+import NewOrderController from './controllers/NewOrderController';
 
 dotenv.config();
 
@@ -22,10 +22,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/:shop_slug/webhooks/orders', async (req, res) => {
     if (req.headers['x-webhook-header'] === `${process.env.PLATFORM_TOKEN}` && req.body.scope === 'store/order/transaction/created') {
-        const newOrder = new NewOrders();
+        const newOrder = new NewOrderController();
 
         const orderId = parseInt(req.body.data.order_id, 10);
-        const order: any = await newOrder.init(orderId);
+        const order: any = await newOrder.handleNewBigCommerceOrder(orderId);
 
         res.status(order.status).send(order.error ? order.error : order.data);
     } else {
