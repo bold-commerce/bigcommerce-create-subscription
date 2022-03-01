@@ -1,16 +1,17 @@
+import { BigCommerceOrder } from '../bigcommerce/schema';
+import { Transaction } from '../braintree/schema';
+import BoldApiClient from '../../clients/BoldApiClient';
+import { isAxiosError } from '../../helpers/axios';
+
 import schema, {
     BoldCommerceAddress, SubscriptionPayload, SubscriptionItem,
-} from '../interface/BoldCommerceInterface';
-import { BigCommerceOrder } from '../../bigcommerce/interface/BigCommerceInterface';
-import { Transaction } from '../../braintree/interface/BraintreeInterface';
-import Boldv2 from '../../api/boldv2';
-import { isAxiosError } from '../../../helpers/axios';
+} from './schema';
 
-class Subscriptions {
-    bold: Boldv2;
+class BoldSubscriptionsService {
+    bold: BoldApiClient;
 
     constructor() {
-        this.bold = new Boldv2();
+        this.bold = new BoldApiClient();
     }
 
     async getBillingRules(groupId: string, intervalId: string, dateCreated: string) {
@@ -143,4 +144,4 @@ class Subscriptions {
     }
 }
 
-export default Subscriptions;
+export default BoldSubscriptionsService;

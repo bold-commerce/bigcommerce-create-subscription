@@ -1,29 +1,29 @@
-import BigCommerceOrders from '../services/bigcommerce/orders/orders';
-import Braintree from '../services/braintree/transactions/braintree';
-import Subscriptions from '../services/bold/subscriptions/subscriptions';
-import { BigCommerceOrder } from '../services/bigcommerce/interface/BigCommerceInterface';
+import BigCommerceOrdersService from '../services/bigcommerce/BigCommerceOrdersService';
+import BraintreeTransactionService from '../services/braintree/BraintreeTransactionService';
+import BoldSubscriptionsService from '../services/bold/BoldSubscriptionsService';
+import { BigCommerceOrder } from '../services/bigcommerce/schema';
 import {
     SubscriptionItem,
     SubscriptionPayload,
     BoldCommerceAddress,
-} from '../services/bold/interface/BoldCommerceInterface';
+} from '../services/bold/schema';
 
 
-class NewOrders {
-    bcOrders: BigCommerceOrders;
+class NewOrderController {
+    bcOrders: BigCommerceOrdersService;
 
-    braintree: Braintree;
+    braintree: BraintreeTransactionService;
 
-    boldSubs: Subscriptions;
+    boldSubs: BoldSubscriptionsService;
 
     constructor() {
-        this.bcOrders = new BigCommerceOrders();
-        this.braintree = new Braintree();
-        this.boldSubs = new Subscriptions();
+        this.bcOrders = new BigCommerceOrdersService();
+        this.braintree = new BraintreeTransactionService();
+        this.boldSubs = new BoldSubscriptionsService();
     }
 
 
-    async init(orderId: number) {
+    async handleNewBigCommerceOrder(orderId: number) {
         try {
             const order: BigCommerceOrder = await this.bcOrders.getOrder(orderId);
 
@@ -63,4 +63,4 @@ class NewOrders {
     }
 }
 
-export default NewOrders;
+export default NewOrderController;

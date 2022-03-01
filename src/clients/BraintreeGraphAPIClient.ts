@@ -11,7 +11,7 @@ interface BraintreeInput {
     }
 }
 
-class BraintreeQraphAPI {
+class BraintreeGraphAPIClient {
     private axios: AxiosInstance;
 
     constructor() {
@@ -37,4 +37,4 @@ class BraintreeQraphAPI {
     }
 }
 
-export default BraintreeQraphAPI;
+export default BraintreeGraphAPIClient;

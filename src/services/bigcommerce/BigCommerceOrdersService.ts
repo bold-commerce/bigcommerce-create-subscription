@@ -1,10 +1,11 @@
 import BigCommerce from 'node-bigcommerce';
 
-import states from '../../../states.json';
-import bigCSchema, { BigCommerceOrder } from '../interface/BigCommerceInterface';
-import { BoldCommerceAddress, SubscriptionItem } from '../../bold/interface/BoldCommerceInterface';
+import states from '../../states.json';
+import { BoldCommerceAddress, SubscriptionItem } from '../bold/schema';
 
-class BigCommerceOrders {
+import bigCSchema, { BigCommerceOrder } from './schema';
+
+class BigCommerceOrdersService {
     bc2: BigCommerce;
 
     constructor() {
@@ -122,4 +123,4 @@ class BigCommerceOrders {
         return bigCSchema.orderProducts.parse(await this.bc2.get(`/orders/${orderId}/products`));
     }
 }
-export default BigCommerceOrders;
+export default BigCommerceOrdersService;

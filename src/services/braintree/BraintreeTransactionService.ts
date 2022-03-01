@@ -1,11 +1,12 @@
-import BraintreeQraphAPI from '../../api/braintree-graph-api';
-import schema from '../interface/BraintreeInterface';
+import BraintreeGraphAPIClient from '../../clients/BraintreeGraphAPIClient';
 
-class Braintree {
-    braintree: BraintreeQraphAPI;
+import schema from './schema';
+
+class BraintreeTransactionService {
+    braintree: BraintreeGraphAPIClient;
 
     constructor() {
-        this.braintree = new BraintreeQraphAPI();
+        this.braintree = new BraintreeGraphAPIClient();
     }
 
     async transactionSearchInput(orderId: number, transactionLegacyId: string) {
@@ -62,4 +63,4 @@ class Braintree {
     }
 }
 
-export default Braintree;
+export default BraintreeTransactionService;

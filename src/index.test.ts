@@ -1,14 +1,14 @@
 import request from 'supertest';
 
-import BigCommerceOrders from './services/bigcommerce/orders/orders';
-import Braintree from './services/braintree/transactions/braintree';
+import BigCommerceOrdersService from './services/bigcommerce/BigCommerceOrdersService';
+import BraintreeTransactionService from './services/braintree/BraintreeTransactionService';
 
 import app from './index';
 
 
 const order: string | undefined = process.env.BIGCOMMERCE_TEST_ORDER;
-const bcOrder = new BigCommerceOrders();
-const braintree = new Braintree();
+const bcOrder = new BigCommerceOrdersService();
+const braintree = new BraintreeTransactionService();
 
 describe('post /test/webhooks/orders', () => {
     beforeEach(() => {
