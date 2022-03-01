@@ -29,6 +29,9 @@ class Subscriptions {
 
         const createdDate = new Date(dateCreated).toISOString().split('T')[0];
         const rruleDate = new Date(nextDate).toISOString().split('T')[0];
+        if (!rruleDate) {
+            throw new Error('RRule date not found');
+        }
         const rrule = rruleDate.replace(/-/g, '');
 
         return {
@@ -42,7 +45,11 @@ class Subscriptions {
 
     async createSubscription(index: number, order: BigCommerceOrder, lineItems: SubscriptionItem[], billingAddress: BoldCommerceAddress, shippingAddress: BoldCommerceAddress, braintreeTransaction: Transaction) {
         try {
-            const billingRules = await this.getBillingRules(lineItems[0].subscription_group_id, lineItems[0].interval_id, order.date_created);
+            const lineItem = lineItems[0];
+            if (!lineItem) {
+                throw new Error('lineitems array is empty');
+            }
+            const billingRules = await this.getBillingRules(lineItem.subscription_group_id, lineItem.interval_id, order.date_created);
 
             if (billingRules.error) {
                 return { status: billingRules.status, error: billingRules.error };
