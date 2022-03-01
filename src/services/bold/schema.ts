@@ -77,11 +77,6 @@ const subscriptionSchema = z.object({
     payment_details: paymentDetailsSchema,
 });
 
-const subscriptionPayloadSchema = z.object({
-    customer: customerSchema,
-    subscription: subscriptionSchema,
-});
-
 const schema = {
     address: addressSchema,
     subscription: subscriptionSchema,
@@ -89,7 +84,6 @@ const schema = {
     subscriptionGroup: subscriptionGroupSchema,
     nextDate: nextDateSchema,
     billingRules: billingRuleSchema,
-    subscriptionPayload: subscriptionPayloadSchema,
 };
 
 export default schema;
@@ -99,4 +93,32 @@ export type SubscriptionItem = z.infer<typeof subscriptionItemSchema>
 export type SubscriptionGroups = z.infer<typeof subscriptionGroupSchema>
 export type NextDate = z.infer<typeof nextDateSchema>
 export type BillingRule = z.infer<typeof billingRuleSchema>
-export type SubscriptionPayload = z.infer<typeof subscriptionPayloadSchema>
+
+export interface CreateSubscriptionPayload {
+    customer: z.infer<typeof customerSchema>,
+    subscription: {
+        idempotency_key: string,
+        next_order_datetime: string,
+        last_order_datetime: string,
+        subscription_status: string,
+        order_rrule: string,
+        base_currency: string,
+        charged_currency: string,
+        base_to_charged_exchange_rate: number,
+        line_items: {
+            line_item_id: string,
+            interval_id: string,
+            interval_text: string,
+            subscription_group_id: string,
+            platform_product_id: string,
+            platform_variant_id: string,
+            quantity: number,
+            price: number,
+        }[],
+        billing_address: BoldCommerceAddress,
+        shipping_address: BoldCommerceAddress,
+        external_id: string,
+        note: string,
+        payment_details: z.infer<typeof paymentDetailsSchema>,
+    },
+}
