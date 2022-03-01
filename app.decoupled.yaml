@@ -1,0 +1,8 @@
+service: decoupled
+runtime: nodejs
+env: flex
+automatic_scaling:
+   min_num_instances: 1
+network:
+  name: default
+  subnetwork_name: default

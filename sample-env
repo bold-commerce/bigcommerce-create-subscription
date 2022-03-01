@@ -1,0 +1,9 @@
+BOLD_ACCESS_TOKEN=<Bold Access Token>
+BOLD_SHOP_IDENTIFIER=<Bold Shop Id>
+SHOP_SLUG=<An internal slug to identify the store>
+PLATFORM_CLIENT=<BigCommerce Client Id>
+PLATFORM_IDENTIFIER=<BigCommerce Store Id>
+PLATFORM_TOKEN=<BigCommerce Access Token>
+BRAINTREE_PUBLIC_KEY=<Braintree Public Key>
+BRAINTREE_PRIVATE_KEY=<Braintree Private Key>
+BIGCOMMERCE_TEST_ORDER=100
