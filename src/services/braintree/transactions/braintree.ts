@@ -1,5 +1,5 @@
 import BraintreeQraphAPI from '../../api/braintree-graph-api';
-import { Transaction } from '../interface/BraintreeInterface';
+import schema from '../interface/BraintreeInterface';
 
 class Braintree {
     braintree: BraintreeQraphAPI;
@@ -42,17 +42,23 @@ class Braintree {
             },
         };
 
-        return new Promise((resolve, reject) => {
-            this.braintree.post(query, variables)
-                .then(({ data, status }: any) => {
-                    const transactions = data?.search?.transactions;
-                    const payload = transactions?.edges.find((transaction: any) => transaction.node?.legacyId === transactionLegacyId);
+        return this.braintree.post(query, variables)
+            .then(({ data, status }) => {
+                const queryResult = schema.queryResponse.parse(data);
 
-                    const braintreeTransaction: Transaction = payload?.node;
-                    resolve({ braintreeTransaction, status });
-                })
-                .catch((error: any) => reject(error));
-        });
+                const braintreeTransaction = queryResult?.data?.search?.transactions?.edges
+                    ?.map(transaction => schema.transaction.parse(transaction.node))
+                    .find(transactionNode => transactionNode.legacyId === transactionLegacyId);
+
+                if (!braintreeTransaction) {
+                    throw new Error('Could not find braintree transaction');
+                }
+
+                return {
+                    braintreeTransaction,
+                    status,
+                };
+            });
     }
 }
 
