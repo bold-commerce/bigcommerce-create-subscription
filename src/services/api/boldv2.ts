@@ -1,19 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosResponse, AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-
-interface ErrorObject {
-    error: unknown,
-    status: number,
-}
-
-const formatAxiosResponse = <T>(promise: Promise<AxiosResponse<T>>): Promise<AxiosResponse<T> | ErrorObject> => promise
-    .catch((error: any) => ({
-        error: error.response.data,
-        status: error.response.status as number,
-    }));
 
 class Boldv2 {
     private axios: AxiosInstance;
@@ -35,33 +24,23 @@ class Boldv2 {
     }
 
     async get(params: string) {
-        return formatAxiosResponse(
-            this.axios.get(params),
-        );
+        return this.axios.get(params);
     }
 
     async delete(params: string) {
-        return formatAxiosResponse(
-            this.axios.delete(params),
-        );
+        return this.axios.delete(params);
     }
 
     async post(params: string, body: any) {
-        return formatAxiosResponse(
-            this.axios.post(params, body),
-        );
+        return this.axios.post(params, body);
     }
 
     async put(params: string, body: any) {
-        return formatAxiosResponse(
-            this.axios.put(params, body),
-        );
+        return this.axios.put(params, body);
     }
 
     async patch(params: string, body: any) {
-        return formatAxiosResponse(
-            this.axios.patch(params, body),
-        );
+        return this.axios.patch(params, body);
     }
 }
 
