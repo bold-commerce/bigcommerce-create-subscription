@@ -57,6 +57,7 @@ class NewOrders {
             if (error.code && error.responseBody) {
                 return { error: error.responseBody, status: error.code };
             }
+            console.error(error);
             return { error, status: 500 };
         }
     }

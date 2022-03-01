@@ -1,7 +1,7 @@
 import BigCommerce from 'node-bigcommerce';
 
 import states from '../../../states.json';
-import { BigCommerceShippingAddress, BigCommerceOrder } from '../interface/BigCommerceInterface';
+import bigCSchema, { BigCommerceOrder } from '../interface/BigCommerceInterface';
 import { BoldCommerceAddress, SubscriptionItem } from '../../bold/interface/BoldCommerceInterface';
 
 class BigCommerceOrders {
@@ -18,17 +18,19 @@ class BigCommerceOrders {
     }
 
     async getOrder(orderId: number) {
-        const data: BigCommerceOrder = await this.bc2.get(`/orders/${orderId}`);
-        return data;
+        return bigCSchema.order.parse(await this.bc2.get(`/orders/${orderId}`));
     }
 
     async getSubItems(orderId: number, subsData: Omit<SubscriptionItem, 'price'>[]) {
-        const data = await this.bc2.get(`/orders/${orderId}/products`);
+        const data = bigCSchema.orderProducts.parse(await this.bc2.get(`/orders/${orderId}/products`));
 
         const subTypes: Pick<SubscriptionItem, 'interval_id' | 'subscription_group_id'>[] = [];
 
         const items: SubscriptionItem[] = await Promise.all(subsData.map((item) => {
-            const orderItem = data.find((x: any) => x.variant_id === parseInt(item.platform_variant_id, 10));
+            const orderItem = data.find(x => x.variant_id === parseInt(item.platform_variant_id, 10));
+            if (!orderItem) {
+                throw new Error(`Could not find order item for BigCommerce variant ID ${item.platform_product_id}`);
+            }
 
             subTypes.push({
                 interval_id: item.interval_id,
@@ -43,61 +45,64 @@ class BigCommerceOrders {
                 platform_product_id: item.platform_product_id,
                 platform_variant_id: item.platform_variant_id,
                 quantity: item.quantity,
-                price: (orderItem?.base_price * 100),
+                price: (Number.parseFloat(orderItem.base_price) * 100),
             };
         }));
 
         const subSets = [...new Map(subTypes.map(obj => [JSON.stringify(obj), obj])).values()];
 
-        return subSets.map((x: any) => items?.filter((item: any) => item.interval_id === x.interval_id && item.subscription_group_id === x.subscription_group_id));
+        return subSets.map(x => items.filter(item => (
+            item.interval_id === x.interval_id
+            && item.subscription_group_id === x.subscription_group_id
+        )));
     }
 
-    async getShippingAddress(orderId: number) {
-        const data: BigCommerceShippingAddress[] = await this.bc2.get(`/orders/${orderId}/shipping_addresses`);
+    async getShippingAddress(orderId: number): Promise<BoldCommerceAddress> {
+        const data = bigCSchema.shippingAddresses.parse(await this.bc2.get(`/orders/${orderId}/shipping_addresses`));
+        const address = data[0];
+        if (!address) {
+            throw new Error(`No shipping addresses for BigCommerce order ID ${orderId}`);
+        }
 
-        const country = states.find((territory: any) => territory.abbreviation === data[0].country_iso2);
-
+        const country = states.find(territory => territory.abbreviation === address.country_iso2);
         if (country === undefined) {
-            throw new Error('country is undefined');
+            throw new Error(`Could not find country mapping for ISO ${address.country_iso2}`);
         }
 
-        const province = country.states.find((state: any) => state.name === data[0].state);
-
+        const province = country.states.find(state => state.name === address.state);
         if (province === undefined) {
-            throw new Error('province is undefined');
+            throw new Error(`Could not find province mapping for state ${address.state}`);
         }
 
-        const address: BoldCommerceAddress = {
-            first_name: data[0].first_name,
-            last_name: data[0].last_name,
-            company: data[0].company,
-            phone: data[0].phone,
-            street1: data[0].street_1,
-            street2: data[0].street_2,
-            city: data[0].city,
-            province: data[0].state,
+        return {
+            first_name: address.first_name,
+            last_name: address.last_name,
+            company: address.company,
+            phone: address.phone,
+            street1: address.street_1,
+            street2: address.street_2,
+            city: address.city,
+            province: address.state,
             province_code: province.abbreviation,
-            country: data[0].country,
-            country_code: data[0].country_iso2,
-            zip: data[0].zip,
+            country: address.country,
+            country_code: address.country_iso2,
+            zip: address.zip,
         };
-        return address;
     }
 
-    async getBillingAddress(billingAddress: BigCommerceOrder['billing_address']) {
-        const country = states.find((territory: any) => territory.abbreviation === billingAddress.country_iso2);
-
+    // eslint-disable-next-line class-methods-use-this
+    async getBillingAddress(billingAddress: BigCommerceOrder['billing_address']): Promise<BoldCommerceAddress> {
+        const country = states.find(territory => territory.abbreviation === billingAddress.country_iso2);
         if (country === undefined) {
-            throw new Error('country is undefined');
+            throw new Error(`Could not find country mapping for ISO ${billingAddress.country_iso2}`);
         }
 
-        const province = country.states.find((state: any) => state.name === billingAddress.state);
-
+        const province = country.states.find(state => state.name === billingAddress.state);
         if (province === undefined) {
-            throw new Error('province is undefined');
+            throw new Error(`Could not find province mapping for state ${billingAddress.state}`);
         }
 
-        const address: BoldCommerceAddress = {
+        return {
             first_name: billingAddress.first_name,
             last_name: billingAddress.last_name,
             company: billingAddress.company,
@@ -111,13 +116,10 @@ class BigCommerceOrders {
             country_code: billingAddress.country_iso2,
             zip: billingAddress.zip,
         };
-        return address;
     }
 
     async gerOrderItems(orderId: number) {
-        const data = await this.bc2.get(`/orders/${orderId}/products`);
-
-        return data;
+        return bigCSchema.orderProducts.parse(await this.bc2.get(`/orders/${orderId}/products`));
     }
 }
 export default BigCommerceOrders;
