@@ -25,19 +25,23 @@ app.post('/:shop_slug/webhooks/orders', async (req, res) => {
         const newOrder = new NewOrderController();
 
         const orderId = parseInt(req.body.data.order_id, 10);
-        const order: any = await newOrder.handleNewBigCommerceOrder(orderId);
+        const order = await newOrder.handleNewBigCommerceOrder(orderId);
 
-        res.status(order.status).send(order.error ? order.error : order.data);
+        if (order.error) {
+            res.status(order?.status || 500).send(order.error);
+        } else {
+            res.status(order?.status || 201).send(order.data);
+        }
     } else {
         res.status(401).send({ message: 'Unauthorized' });
     }
 });
-
 
 app.use((req, res) => {
     res.json(createError(404));
 });
 
 const port = process.env.PORT || 8000;
+// eslint-disable-next-line no-console
 app.listen(port, () => console.log(`Server running on port ${port}`));
 export default app;

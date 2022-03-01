@@ -1,10 +1,12 @@
-import { BigCommerceOrder } from '../bigcommerce/schema';
 import { Transaction } from '../braintree/schema';
 import BoldApiClient from '../../clients/BoldApiClient';
+import { BigCommerceOrder } from '../bigcommerce/schema';
 import { isAxiosError } from '../../helpers/axios';
 
 import schema, {
-    BoldCommerceAddress, SubscriptionPayload, SubscriptionItem,
+    BoldCommerceAddress,
+    CreateSubscriptionPayload,
+    SubscriptionItem,
 } from './schema';
 
 class BoldSubscriptionsService {
@@ -99,7 +101,7 @@ class BoldSubscriptionsService {
                 ? 'Braintree Paypal'
                 : 'Braintree Credit Card';
 
-            const body: SubscriptionPayload = {
+            const body: CreateSubscriptionPayload = {
                 customer: {
                     first_name: order.billing_address.first_name,
                     last_name: order.billing_address.last_name,
@@ -139,7 +141,7 @@ class BoldSubscriptionsService {
                 };
             }
 
-            return error;
+            throw error;
         }
     }
 }
