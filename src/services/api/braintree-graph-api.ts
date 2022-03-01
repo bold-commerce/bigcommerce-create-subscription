@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -33,11 +33,6 @@ class BraintreeQraphAPI {
             JSON.stringify({
                 query: `query ${query}`,
                 variables,
-            }))
-            .then(({ data: { data }, status }) => ({ data, status }))
-            .catch((error: AxiosError<unknown>) => ({
-                error: error.response?.data,
-                status: error.response?.status,
             }));
     }
 }
