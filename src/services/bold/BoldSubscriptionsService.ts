@@ -2,6 +2,7 @@ import { Transaction } from '../braintree/schema';
 import BoldApiClient from '../../clients/BoldApiClient';
 import { BigCommerceOrder } from '../bigcommerce/schema';
 import { isAxiosError } from '../../helpers/axios';
+import { Config } from '../../config';
 
 import schema, {
     BoldCommerceAddress,
@@ -10,15 +11,18 @@ import schema, {
 } from './schema';
 
 class BoldSubscriptionsService {
-    bold: BoldApiClient;
+    private bold: BoldApiClient;
 
-    constructor() {
-        this.bold = new BoldApiClient();
+    private shopIdentifier: string;
+
+    constructor(config: Pick<Config, 'bold'>) {
+        this.bold = new BoldApiClient(config);
+        this.shopIdentifier = config.bold.shopIdentifier;
     }
 
     async getBillingRules(groupId: string, intervalId: string, dateCreated: string) {
         try {
-            const { data } = await this.bold.get(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscription_groups/${groupId}`);
+            const { data } = await this.bold.get(`/subscriptions/v1/shops/${this.shopIdentifier}/subscription_groups/${groupId}`);
             const subscriptionGroup = schema.subscriptionGroup.safeParse(data.subscription_group);
             if (!subscriptionGroup.success) {
                 return {
@@ -130,7 +134,7 @@ class BoldSubscriptionsService {
                 },
             };
 
-            const { data, status } = await this.bold.post(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscriptions`, body);
+            const { data, status } = await this.bold.post(`/subscriptions/v1/shops/${this.shopIdentifier}/subscriptions`, body);
             const subscription: unknown = data;
             return { subscription, status };
         } catch (error) {

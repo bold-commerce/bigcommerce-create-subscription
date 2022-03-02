@@ -1,14 +1,18 @@
 import request from 'supertest';
+import * as dotenv from 'dotenv';
 
+import { createConfigFromEnvironment } from './config';
 import BigCommerceOrdersService from './services/bigcommerce/BigCommerceOrdersService';
 import BraintreeTransactionService from './services/braintree/BraintreeTransactionService';
 
 import app from './index';
 
+dotenv.config();
+const config = createConfigFromEnvironment();
 
 const order: string | undefined = process.env.BIGCOMMERCE_TEST_ORDER;
-const bcOrder = new BigCommerceOrdersService();
-const braintree = new BraintreeTransactionService();
+const bcOrder = new BigCommerceOrdersService(config);
+const braintree = new BraintreeTransactionService(config);
 
 describe('post /test/webhooks/orders', () => {
     beforeEach(() => {
@@ -46,7 +50,7 @@ describe('post /test/webhooks/orders', () => {
                     order_id: orderId,
                 },
             })
-            .set({ 'x-webhook-header': process.env.PLATFORM_TOKEN });
+            .set({ 'x-webhook-header': config.platform.accessToken });
         expect(res.statusCode).toEqual(201);
     });
     jest.clearAllTimers();

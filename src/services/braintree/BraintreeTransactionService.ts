@@ -1,12 +1,13 @@
 import BraintreeGraphAPIClient from '../../clients/BraintreeGraphAPIClient';
+import { Config } from '../../config';
 
 import schema from './schema';
 
 class BraintreeTransactionService {
     braintree: BraintreeGraphAPIClient;
 
-    constructor() {
-        this.braintree = new BraintreeGraphAPIClient();
+    constructor(config: Pick<Config, 'braintree'>) {
+        this.braintree = new BraintreeGraphAPIClient(config);
     }
 
     async transactionSearchInput(orderId: number, transactionLegacyId: string) {
