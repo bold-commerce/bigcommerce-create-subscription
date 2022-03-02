@@ -30,7 +30,7 @@ class NewOrderController {
             if (!order || !order?.customer_message?.includes('bold_subscriptions')) {
                 return { error: '1. no order found, or no subscription items found on this order', status: 422 };
             }
-
+            /* eslint-disable no-return-await */
             const { braintreeTransaction }: any = await this.braintree.transactionSearchInput(orderId, order.payment_provider_id);
 
             if (!braintreeTransaction || !braintreeTransaction.legacyId || !braintreeTransaction.paymentMethod) {
