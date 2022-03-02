@@ -33,7 +33,7 @@ class NewOrderController {
 
             const { braintreeTransaction }: any = await this.braintree.transactionSearchInput(orderId, order.payment_provider_id);
 
-            if (!braintreeTransaction || !braintreeTransaction.legacyId || !braintreeTransaction.paymentMethod ) {
+            if (!braintreeTransaction || !braintreeTransaction.legacyId || !braintreeTransaction.paymentMethod) {
                 return ({ error: '2. no transaction found', status: 404 });
             }
 
@@ -52,7 +52,7 @@ class NewOrderController {
 
             const subscription: SubscriptionPayload[] = createSubscription.filter((response:any) => response.subscription);
 
-            return {data: subscription, status: 201}
+            return { data: subscription, status: 201 };
         } catch (error: any) {
             if (error.code && error.responseBody) {
                 return { error: error.responseBody, status: error.code };
