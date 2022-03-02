@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance } from 'axios';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
+import { Config } from '../config';
 
 class BoldApiClient {
     private axios: AxiosInstance;
 
-    constructor() {
-        const token = process.env.BOLD_ACCESS_TOKEN;
+    constructor(config: Pick<Config, 'bold'>) {
+        const token = config.bold.accessToken;
         if (token === undefined) {
             throw new Error('Bold Demo Api is undefined');
         }

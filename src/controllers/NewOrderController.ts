@@ -2,6 +2,7 @@ import BigCommerceOrdersService from '../services/bigcommerce/BigCommerceOrdersS
 import BraintreeTransactionService from '../services/braintree/BraintreeTransactionService';
 import BoldSubscriptionsService from '../services/bold/BoldSubscriptionsService';
 import { BigCommerceOrder } from '../services/bigcommerce/schema';
+import { Config } from '../config';
 
 interface ResponseBodyError<T> {
     responseBody: T,
@@ -20,10 +21,10 @@ class NewOrderController {
 
     private boldSubs: BoldSubscriptionsService;
 
-    constructor() {
-        this.bcOrders = new BigCommerceOrdersService();
-        this.braintree = new BraintreeTransactionService();
-        this.boldSubs = new BoldSubscriptionsService();
+    constructor(config: Pick<Config, 'platform' | 'bold' | 'braintree'>) {
+        this.bcOrders = new BigCommerceOrdersService(config);
+        this.braintree = new BraintreeTransactionService(config);
+        this.boldSubs = new BoldSubscriptionsService(config);
     }
 
 

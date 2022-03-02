@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
+import { Config } from '../config';
 
 interface BraintreeInput {
     input: {
@@ -14,8 +13,8 @@ interface BraintreeInput {
 class BraintreeGraphAPIClient {
     private axios: AxiosInstance;
 
-    constructor() {
-        const token = Buffer.from(`${process.env.BRAINTREE_PUBLIC_KEY}:${process.env.BRAINTREE_PRIVATE_KEY}`).toString('base64');
+    constructor(config: Pick<Config, 'braintree'>) {
+        const token = Buffer.from(`${config.braintree.publicKey}:${config.braintree.privateKey}`).toString('base64');
 
         this.axios = axios.create({
             baseURL: `${process.env.BRAINTREE_API_URL}/graphql`,

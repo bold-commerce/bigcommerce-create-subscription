@@ -1,5 +1,6 @@
 import BigCommerce from 'node-bigcommerce';
 
+import { Config } from '../../config';
 import states from '../../states.json';
 import { BoldCommerceAddress, SubscriptionItem } from '../bold/schema';
 
@@ -8,11 +9,12 @@ import bigCSchema, { BigCommerceOrder } from './schema';
 class BigCommerceOrdersService {
     bc2: BigCommerce;
 
-    constructor() {
+    constructor(config: Pick<Config, 'platform'>) {
+        const { clientId, accessToken, identifier } = config.platform;
         this.bc2 = new BigCommerce({
-            clientId: process.env.PLATFORM_CLIENT,
-            accessToken: process.env.PLATFORM_TOKEN,
-            storeHash: process.env.PLATFORM_IDENTIFIER,
+            clientId,
+            accessToken,
+            storeHash: identifier,
             responseType: 'json',
             apiVersion: 'v2', // Default is v2
         });
