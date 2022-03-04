@@ -1,0 +1,12 @@
+// {type:sequence}
+// {generate:true}
+
+
+[:BigCommerce]Processes payment as Multi Use Token>[:Braintree]
+[:Braintree]Vaults Transaction>[:Braintree]
+[:BigCommerce]Transaction created event>[:GCP App Engine]
+[:GCP App Engine]Get Transaction Data>[:Braintree]
+[:Braintree]Braintree Transaction Output.>[:GCP App Engine]
+[:GCP App Engine]Get Order Data>[:BigCommerce]
+[:BigCommerce]BigCommerce Order Output.>[:GCP App Engine]
+[:GCP App Engine]Creates Subscription>[:BoldCommerce]
