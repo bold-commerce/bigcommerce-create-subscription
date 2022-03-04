@@ -2,6 +2,10 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { Config } from '../config';
+import {
+    ConfigurationError,
+    DependencyError,
+} from '../errors';
 
 class BoldApiClient {
     private axios: AxiosInstance;
@@ -20,6 +24,23 @@ class BoldApiClient {
                 Authorization: `Bearer ${token}`,
             },
         });
+
+        this.axios.interceptors.response.use(
+            res => res,
+            (err) => {
+                if (axios.isAxiosError(err)) {
+                    switch (err.response?.status) {
+                    case 401:
+                        return Promise.reject(new ConfigurationError('Failed to authenticate with Bold', err));
+                    case 403:
+                        return Promise.reject(new ConfigurationError('Insufficient authorization with Bold', err));
+                    default:
+                        return Promise.reject(new DependencyError('Bold Subscriptions', err));
+                    }
+                }
+                return Promise.reject(err);
+            },
+        );
     }
 
     async get(params: string) {
