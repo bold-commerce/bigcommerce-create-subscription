@@ -7,3 +7,4 @@ PLATFORM_TOKEN=<BigCommerce Access Token>
 BRAINTREE_PUBLIC_KEY=<Braintree Public Key>
 BRAINTREE_PRIVATE_KEY=<Braintree Private Key>
 BIGCOMMERCE_TEST_ORDER=100
+BRAINTREE_API_URL=https://payments.sandbox.braintree-api.com

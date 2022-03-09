@@ -18,7 +18,7 @@ class BraintreeGraphAPIClient {
         const token = Buffer.from(`${process.env.BRAINTREE_PUBLIC_KEY}:${process.env.BRAINTREE_PRIVATE_KEY}`).toString('base64');
 
         this.axios = axios.create({
-            baseURL: 'https://payments.sandbox.braintree-api.com/graphql',
+            baseURL: `${process.env.BRAINTREE_API_URL}/graphql`,
             headers: {
                 Accept: 'application/json',
                 'Braintree-Version': '2019-01-01',

@@ -1,3 +1,9 @@
+# Bold Create Subscription Sample Project
+- This is a sample of how to use the Bold Create Subscription Endpoint.
+- This is an example of a using the BigCommerce OS Checkout to create the initial order
+- After the inital order is placed a BigCommece Webhook is used to capture the order contents, Filter the Braintree API & Create a Bold Commerce Subscription.
+- This example is using the Braintree Sandbox environment which can be updated to production within the .env file. Please see the sample-env for more details.
+
 ### Requirements
 * Node >= v14.
 * NPM >= v3.
