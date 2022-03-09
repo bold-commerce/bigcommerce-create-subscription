@@ -14,14 +14,14 @@ const queryResponseSchema = z.object({
 
 const transactionSchema = z.object({
     legacyId: z.string(),
-    paymentMethod: z.object({
+    paymentMethod: z.nullable(z.object({
         usage: z.string(),
         id: z.string(),
         legacyId: z.string(),
         details: z.object({
             __typename: z.string(),
         }),
-    }),
+    })),
 });
 
 const transactionErrorSchema = z.object({

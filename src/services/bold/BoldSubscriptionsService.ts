@@ -97,6 +97,9 @@ class BoldSubscriptionsService {
             if (billingRules.next_order_datetime === undefined || billingRules.last_order_datetime === undefined) {
                 throw new Error('date not found');
             }
+            if (braintreeTransaction.paymentMethod === null) {
+                return { error: 'No braintree transaction found', status: 404 };
+            }
             const gatewayName = braintreeTransaction.paymentMethod.details.__typename === 'PayPalAccountDetails'
                 ? 'Braintree Paypal'
                 : 'Braintree Credit Card';
