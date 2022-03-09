@@ -47,7 +47,8 @@ describe('post /test/webhooks/orders', () => {
                 },
             })
             .set({ 'x-webhook-header': process.env.PLATFORM_TOKEN });
-        expect(res.statusCode).toEqual(201);
+        expect(res.body.status).toEqual(201);
+        expect(res.statusCode).toEqual(200);
     });
     jest.clearAllTimers();
 });
