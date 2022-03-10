@@ -35,6 +35,20 @@ const orderProductSchema = z.object({
     base_price: z.string(),
 });
 
+const transactionScehma = z.nullable(z.object({
+    id: z.number(),
+    event: z.string(),
+    method: z.string(),
+    status: z.string(),
+    gateway: z.string(),
+    gateway_transaction_id: z.string(),
+}));
+
+const transactionsResponseScehma = z.object({
+    data: z.array(transactionScehma),
+});
+
+
 const schema = {
     shippingAddress: shippingAddressSchema,
     shippingAddresses: z.array(shippingAddressSchema),
@@ -42,6 +56,8 @@ const schema = {
     orders: z.array(orderSchema),
     orderProduct: orderProductSchema,
     orderProducts: z.array(orderProductSchema),
+    orderTransactionsResponse: transactionsResponseScehma,
+    orderTransactions: transactionScehma,
 };
 
 export default schema;
@@ -49,3 +65,5 @@ export default schema;
 export type OrderProduct = z.infer<typeof orderProductSchema>
 export type BigCommerceShippingAddress = z.infer<typeof shippingAddressSchema>
 export type BigCommerceOrder = z.infer<typeof orderSchema>
+export type BigCommerceTransactionsResponse = z.infer<typeof transactionsResponseScehma>
+export type BigCommerceTransaction = z.infer<typeof transactionScehma>
