@@ -1,7 +1,7 @@
 # Bold Create Subscription Sample Project
 - This is a sample app demonstrating how to use the Bold Create Subscription Endpoint.
-- This is an example of using the BigCommerce OS Checkout to create the initial order. 
-   - After the inital order is placed a BigCommece Webhook is used to capture the order contents, Filter the Braintree API & Create a Bold Commerce Subscription.
+- This is an example of using the BigCommerce OS Checkout to create the initial order.
+   - After the initial order is placed a BigCommerce Webhook is used to capture the order contents, Filter the Braintree API & Create a Bold Commerce Subscription.
 - This example is using the Braintree Sandbox environment which can be updated to production within the .env file. Please see the sample-env for more details.
 - This example highlights how to deploy using Google App Engine.
 
@@ -18,7 +18,7 @@
 
 ### Prerequisites BigCommerce OS Checkout
 1. Use the sample script which uses BigCommerce Checkout-JS <https://github.com/bigcommerce/checkout-js>
-    * For non production testing the API you can use this as a POC Checkout Srouce: https://storage.googleapis.com/bold-sales-demos.appspot.com/dist/auto-loader.js
+    * For non production testing the API you can use this as a POC Checkout Source: https://storage.googleapis.com/bold-sales-demos.appspot.com/dist/auto-loader.js
     * <img src="/checkout-js.png">
 2. Use BigCommerce Checkout with Bold Dev Tools.
    * Add this script into the header of your BigCommerce theme.
