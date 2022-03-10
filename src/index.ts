@@ -25,10 +25,10 @@ app.post('/:shop_slug/webhooks/orders', async (req, res) => {
         const newOrder = new NewOrderController();
 
         const orderId = parseInt(req.body.data.order_id, 10);
-        const order = await newOrder.handleNewBigCommerceOrder(orderId);
+        const transactionId = req.body.data.transaction_id;
+        const order = await newOrder.handleNewBigCommerceOrder(orderId, transactionId);
 
         // BigCommerce Requires a 200 response from webhooks
-
         if (order.error) {
             res.status(200).send({ error: order.error, status: 500 });
         } else {

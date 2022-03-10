@@ -38,12 +38,14 @@ describe('post /test/webhooks/orders', () => {
     });
 
     it('BigCommerce transaction is created and creates a Bold Subscription', async () => {
+        const bigcommerceOrder = await bcOrder.getOrder(orderId);
         const res = await request(app)
             .post('/test/webhooks/orders')
             .send({
                 scope: 'store/order/transaction/created',
                 data: {
                     order_id: orderId,
+                    transaction_id: bigcommerceOrder.payment_provider_id,
                 },
             })
             .set({ 'x-webhook-header': process.env.PLATFORM_TOKEN });

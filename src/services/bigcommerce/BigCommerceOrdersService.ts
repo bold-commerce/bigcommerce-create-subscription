@@ -5,17 +5,40 @@ import { BoldCommerceAddress, SubscriptionItem } from '../bold/schema';
 
 import bigCSchema, { BigCommerceOrder } from './schema';
 
+
+function bigcommerceClient(apiVersion: string) {
+    return new BigCommerce({
+        clientId: process.env.PLATFORM_CLIENT,
+        accessToken: process.env.PLATFORM_TOKEN,
+        storeHash: process.env.PLATFORM_IDENTIFIER,
+        responseType: 'json',
+        apiVersion,
+    });
+}
+
 class BigCommerceOrdersService {
     bc2: BigCommerce;
 
+    bc3: BigCommerce;
+
     constructor() {
-        this.bc2 = new BigCommerce({
-            clientId: process.env.PLATFORM_CLIENT,
-            accessToken: process.env.PLATFORM_TOKEN,
-            storeHash: process.env.PLATFORM_IDENTIFIER,
-            responseType: 'json',
-            apiVersion: 'v2', // Default is v2
-        });
+        this.bc2 = bigcommerceClient('v2');
+        this.bc3 = bigcommerceClient('v3');
+    }
+
+    async getOrderTransaction(orderId: number, transactionId: string) {
+        const bcTransactionResult = bigCSchema.orderTransactionsResponse.parse(await this.bc3.get(`/orders/${orderId}/transactions`));
+        const bcTransaction = bcTransactionResult.data
+            .find(data => data && data.gateway_transaction_id === transactionId);
+
+        if (!bcTransaction || bcTransaction.status !== 'ok' || bcTransaction.event !== 'purchase') {
+            return {
+                error: 'Something went wrong with this transaction, the transaction may have been declined',
+                data: bcTransactionResult,
+                status: 'error',
+            };
+        }
+        return bcTransaction;
     }
 
     async getOrder(orderId: number) {

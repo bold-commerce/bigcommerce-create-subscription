@@ -12,7 +12,7 @@ declare module "node-bigcommerce" {
         accessToken?: string;
         storeHash?: string;
         responseType?: "json" | "xml";
-        apiVersion?: "v2" | "v3";
+        apiVersion?: string;
         headers?: any;
       }
     );
