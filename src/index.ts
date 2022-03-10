@@ -24,14 +24,26 @@ app.post('/:shop_slug/webhooks/orders', async (req, res) => {
     if (req.headers['x-webhook-header'] === `${process.env.PLATFORM_TOKEN}` && req.body.scope === 'store/order/transaction/created') {
         const newOrder = new NewOrderController();
 
+
         const orderId = parseInt(req.body.data.order_id, 10);
         const transactionId = req.body.data.transaction_id;
+
         const order = await newOrder.handleNewBigCommerceOrder(orderId, transactionId);
 
         // BigCommerce Requires a 200 response from webhooks
         if (order.error) {
+            console.log({ // eslint-disable-line no-console
+                error: order.error,
+                order_id: orderId,
+                transaction_id: transactionId,
+                status: 500,
+            });
             res.status(200).send({ error: order.error, status: 500 });
         } else {
+            console.log({ // eslint-disable-line no-console
+                order_id: orderId,
+                transaction_id: transactionId,
+            });
             res.status(200).send({ data: order.data, status: 201 });
         }
     } else {

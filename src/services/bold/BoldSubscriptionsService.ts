@@ -134,7 +134,9 @@ class BoldSubscriptionsService {
             };
 
             const { data, status } = await this.bold.post(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscriptions`, body);
+            console.log({ subscription_id: data?.subscription?.id, status }); // eslint-disable-line no-console
             const subscription: unknown = data;
+
             return { subscription, status };
         } catch (error) {
             if (isAxiosError(error) && error.response) {
