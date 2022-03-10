@@ -32,18 +32,18 @@ app.post('/:shop_slug/webhooks/orders', async (req, res) => {
 
         // BigCommerce Requires a 200 response from webhooks
         if (order.error) {
-            console.log({ // eslint-disable-line no-console
+            console.log(JSON.stringify({ // eslint-disable-line no-console
                 error: order.error,
                 order_id: orderId,
                 transaction_id: transactionId,
                 status: 500,
-            });
+            }));
             res.status(200).send({ error: order.error, status: 500 });
         } else {
-            console.log({ // eslint-disable-line no-console
+            console.log(JSON.stringify({ // eslint-disable-line no-console
                 order_id: orderId,
                 transaction_id: transactionId,
-            });
+            }));
             res.status(200).send({ data: order.data, status: 201 });
         }
     } else {
