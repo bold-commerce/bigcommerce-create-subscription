@@ -51,14 +51,12 @@ class BraintreeTransactionService {
                     ?.map(transaction => schema.transaction.parse(transaction.node))
                     .find(transactionNode => transactionNode.legacyId === transactionLegacyId);
 
-                if (!braintreeTransaction) {
-                    throw new Error('Could not find braintree transaction');
+
+                if (!braintreeTransaction || !braintreeTransaction.legacyId || !braintreeTransaction.paymentMethod || !braintreeTransaction.paymentMethod.legacyId) {
+                    return ({ token: null, error: '2. no Braintree transaction found', status: 'error' });
                 }
 
-                return {
-                    braintreeTransaction,
-                    status,
-                };
+                return { token: braintreeTransaction.paymentMethod.legacyId, status: 'ok', error: null };
             });
     }
 }

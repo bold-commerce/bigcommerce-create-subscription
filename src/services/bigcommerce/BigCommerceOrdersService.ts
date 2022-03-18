@@ -31,10 +31,19 @@ class BigCommerceOrdersService {
         const bcTransaction = bcTransactionResult.data
             .find(data => data && data.gateway_transaction_id === transactionId);
 
-        if (!bcTransaction || bcTransaction.status !== 'ok' || bcTransaction.event !== 'purchase') {
+        if (!bcTransaction
+            || bcTransaction.status !== 'ok'
+            || bcTransaction.event !== 'purchase'
+            || bcTransaction.payment_instrument_token === null) {
+            const message = bcTransaction
+            && bcTransaction.payment_instrument_token === null
+                ? 'This was a one time purchase'
+                : 'Something went wrong with this transaction, the transaction may have been declined';
+
             return {
-                error: 'Something went wrong with this transaction, the transaction may have been declined',
+                error: message,
                 data: bcTransactionResult,
+                payment_method_id: 'error',
                 status: 'error',
             };
         }

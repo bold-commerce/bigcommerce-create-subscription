@@ -27,7 +27,10 @@ app.post('/:shop_slug/webhooks/orders', async (req, res) => {
 
         const orderId = parseInt(req.body.data.order_id, 10);
         const transactionId = req.body.data.transaction_id;
-
+        console.log({
+            order_id: orderId,
+            transaction_id: transactionId,
+        });
         const order = await newOrder.handleNewBigCommerceOrder(orderId, transactionId);
 
         // BigCommerce Requires a 200 response from webhooks
@@ -50,6 +53,7 @@ app.post('/:shop_slug/webhooks/orders', async (req, res) => {
         res.status(200).send({ message: 'Unauthorized', status: 401 });
     }
 });
+
 
 app.use((req, res) => {
     res.json(createError(404));
