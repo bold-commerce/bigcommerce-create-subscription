@@ -13,11 +13,11 @@ class PaymentController {
 
     async handlePayments(paymentMethodId: string, orderId: number, transactionId: string) {
         if (paymentMethodId === 'stripev3.card') {
-            const { token, status, error } = await this.stripe.init(transactionId);
+            const { token, status, error } = await this.stripe.retrievePaymentIntents(transactionId);
 
-            return ({
+            return {
                 token, gateway_name: 'Stripe Default Name', status, error,
-            });
+            };
         } if (paymentMethodId === 'braintree.paypal') {
             const { token, status, error } = await this.braintree.transactionSearchInput(orderId, transactionId);
 
