@@ -18,7 +18,7 @@ class StripeTransactionService {
         });
     }
 
-    async init(transactionId: string) {
+    async retrievePaymentIntents(transactionId: string) {
         const transaction = await this.stripe.paymentIntents.retrieve(transactionId);
 
         if (!transaction || transaction.customer === null || !transaction.customer) {

@@ -36,7 +36,7 @@ class BigCommerceOrdersService {
             || bcTransaction.event !== 'purchase'
             || bcTransaction.payment_instrument_token === null) {
             const message = bcTransaction
-            && bcTransaction.payment_instrument_token === null
+                && bcTransaction.payment_instrument_token === null
                 ? 'This was a one time purchase'
                 : 'Something went wrong with this transaction, the transaction may have been declined';
 
