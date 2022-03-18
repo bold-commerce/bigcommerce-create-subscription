@@ -42,6 +42,8 @@ const transactionScehma = z.nullable(z.object({
     status: z.string(),
     gateway: z.string(),
     gateway_transaction_id: z.string(),
+    payment_instrument_token: z.nullable(z.string()),
+    payment_method_id: z.string(),
 }));
 
 const transactionsResponseScehma = z.object({

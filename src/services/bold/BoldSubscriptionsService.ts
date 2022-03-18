@@ -78,7 +78,9 @@ class BoldSubscriptionsService {
         lineItems: SubscriptionItem[],
         billingAddress: BoldCommerceAddress,
         shippingAddress: BoldCommerceAddress,
-        braintreeTransaction: Transaction,
+        transactionId: string,
+        gatewayName: string | null,
+        token: string | null,
     ) {
         try {
             const lineItem = lineItems[0];
@@ -97,12 +99,10 @@ class BoldSubscriptionsService {
             if (billingRules.next_order_datetime === undefined || billingRules.last_order_datetime === undefined) {
                 throw new Error('date not found');
             }
-            if (braintreeTransaction.paymentMethod === null) {
-                return { error: 'No braintree transaction found', status: 404 };
+            if (token === null || gatewayName === null) {
+                return { error: 'No transaction found', status: 404 };
             }
-            const gatewayName = braintreeTransaction.paymentMethod.details.__typename === 'PayPalAccountDetails'
-                ? 'Braintree Paypal'
-                : 'Braintree Credit Card';
+
 
             const body: CreateSubscriptionPayload = {
                 customer: {
@@ -113,7 +113,7 @@ class BoldSubscriptionsService {
                     notes: '',
                 },
                 subscription: {
-                    idempotency_key: `${braintreeTransaction.legacyId}-${index}`,
+                    idempotency_key: `${transactionId}-${index}`,
                     next_order_datetime: billingRules.next_order_datetime,
                     last_order_datetime: billingRules.last_order_datetime,
                     subscription_status: 'active',
@@ -128,10 +128,12 @@ class BoldSubscriptionsService {
                     note: order.staff_notes,
                     payment_details: {
                         gateway_name: gatewayName,
-                        gateway_customer_id: braintreeTransaction.paymentMethod.legacyId,
+                        gateway_customer_id: token,
                     },
                 },
             };
+
+            console.log(JSON.stringify(body));
 
             const { data, status } = await this.bold.post(`/subscriptions/v1/shops/${process.env.BOLD_SHOP_IDENTIFIER}/subscriptions`, body);
             console.log({ subscription_id: data?.subscription?.id, status }); // eslint-disable-line no-console

@@ -1,7 +1,8 @@
 import BigCommerceOrdersService from '../services/bigcommerce/BigCommerceOrdersService';
-import BraintreeTransactionService from '../services/braintree/BraintreeTransactionService';
 import BoldSubscriptionsService from '../services/bold/BoldSubscriptionsService';
 import { BigCommerceOrder } from '../services/bigcommerce/schema';
+
+import PaymentController from './PaymentController';
 
 interface ResponseBodyError<T> {
     responseBody: T,
@@ -16,14 +17,14 @@ function isResponseBodyError<T>(error: ResponseBodyError<T> | any): error is Res
 class NewOrderController {
     private bcOrders: BigCommerceOrdersService;
 
-    private braintree: BraintreeTransactionService;
-
     private boldSubs: BoldSubscriptionsService;
+
+    private payments: PaymentController;
 
     constructor() {
         this.bcOrders = new BigCommerceOrdersService();
-        this.braintree = new BraintreeTransactionService();
         this.boldSubs = new BoldSubscriptionsService();
+        this.payments = new PaymentController();
     }
 
 
@@ -41,10 +42,15 @@ class NewOrderController {
                 return { error: '1. no order found, or no subscription items found on this order', status: 422 };
             }
 
-            // filter braintree transaction data
-            const { braintreeTransaction } = await this.braintree.transactionSearchInput(orderId, transactionId);
-            if (!braintreeTransaction || !braintreeTransaction.legacyId || !braintreeTransaction.paymentMethod) {
-                return ({ error: '2. no transaction found', status: 404 });
+            // filter payment transaction data
+            const paymentTransaction = await this.payments.handlePayments(orderTransaction.payment_method_id, orderId, transactionId);
+
+            if (paymentTransaction?.error
+                || !paymentTransaction
+                || paymentTransaction.status !== 'ok'
+                || !paymentTransaction.token
+                || !paymentTransaction.gateway_name) {
+                return ({ error: paymentTransaction?.error, status: 404 });
             }
 
             // format subscription
@@ -61,7 +67,9 @@ class NewOrderController {
                         subItems,
                         shippingAddress,
                         billingAddress,
-                        braintreeTransaction,
+                        transactionId,
+                        paymentTransaction.gateway_name,
+                        paymentTransaction.token,
                     ),
                 ),
             );

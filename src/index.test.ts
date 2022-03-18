@@ -2,6 +2,7 @@ import request from 'supertest';
 
 import BigCommerceOrdersService from './services/bigcommerce/BigCommerceOrdersService';
 import BraintreeTransactionService from './services/braintree/BraintreeTransactionService';
+import PaymentController from './controllers/PaymentController';
 
 import app from './index';
 
@@ -9,6 +10,7 @@ import app from './index';
 const order: string | undefined = process.env.BIGCOMMERCE_TEST_ORDER;
 const bcOrder = new BigCommerceOrdersService();
 const braintree = new BraintreeTransactionService();
+const payments = new PaymentController();
 
 describe('post /test/webhooks/orders', () => {
     beforeEach(() => {
@@ -31,10 +33,15 @@ describe('post /test/webhooks/orders', () => {
         expect(bigcommerceOrder.customer_message).toContain('bold_subscriptions');
     });
 
-    it('Braintree transaction data found & matches BigCommerce order data', async () => {
+    it('An error occured with the payment method', async () => {
         const bigcommerceOrder = await bcOrder.getOrder(orderId);
-        const res: any = await braintree.transactionSearchInput(orderId, bigcommerceOrder.payment_provider_id);
-        expect(bigcommerceOrder.payment_provider_id).toEqual(res.braintreeTransaction?.legacyId);
+        const orderTransactionData = await bcOrder.getOrderTransaction(orderId, bigcommerceOrder.payment_provider_id);
+
+        expect(orderTransactionData.status).toEqual('ok');
+
+        const paymentData: any = await payments.handlePayments(orderTransactionData.payment_method_id, orderId, bigcommerceOrder.payment_provider_id);
+
+        expect(paymentData.status).toEqual('ok');
     });
 
     it('BigCommerce transaction is created and creates a Bold Subscription', async () => {
