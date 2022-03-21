@@ -65,7 +65,7 @@
                     await updateCheckout({ customerMessage: JSON.stringify({ bold_subscriptions: subData } || '[]') });
                 }
             } ```
-    - You need to bypass the Bold Checkout while keeping the Bold Checkout Enabled to use the Bold Storefront Dev Tools
+    - Disable The Native Bold Checkout
         - ```javascript 
             window.addEventListener('load', (event) => {
             window.BOLD?.checkout?.disable();
