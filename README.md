@@ -48,8 +48,3 @@
     - In BigCommerce > Advanced > Checkout > Script URL > Add the checkout source
         -[Checkout Source](https://storage.googleapis.com/bold-sales-demos.appspot.com/dist/auto-loader.js)
     - In BigCommerce > Advanced > Checkout > Order > Disable customers to enter comments with their order.
-    - Add to theme header to Disable Bold Checkout
-        - ```javascript 
-            window.addEventListener('load', (event) => {
-            window.BOLD?.checkout?.disable();
-            });```
