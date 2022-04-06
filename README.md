@@ -38,8 +38,8 @@
 
 ## Configuration
 1. Platform Configuration
-    - Install Bold Checkout & Bold Subscriptions on BigCommerce.
-    - Use the same Braintree Credentials in both the Bold Checkout App & BigCommerce Payments area.
+    - [Install Bold Checkout & Bold Subscriptions on BigCommerce](https://www.bigcommerce.com/apps/bold-subscriptions/).
+    - Use the same Braintree Credentials in both the [Bold Checkout App](https://www.bigcommerce.com/apps/bold-checkout/) & BigCommerce Payments area.
     - In BigCommerce > Payments > Braintree > Enable Stored Credit Cards with Braintree
     - In BigCommerce > Payments > Braintree > Disable Required CVV when using a stored credit card.
     - In BigCommerce > Payments > Braintree > Enable PayPal & Enable Stored PayPal Account
