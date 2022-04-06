@@ -2,6 +2,12 @@
 - This is a sample app demonstrating how to [Programmatically Create Subscriptions with Bold Commerce](https://developer.boldcommerce.com/default/guides/subscriptions-v2/create-subscription).
 - This is an example of using the [BigCommerce OS Checkout](https://github.com/bigcommerce/checkout-js) to create the initial order.
 
+## Demo store:
+   * [Demo Subscription Items](https://snow-lion.bolddemos.ninja/supplies/)
+   * Add an item to cart & proceed to checkout
+   * If you have a subscription item in cart it will ask you to first create an account during checkout.
+   * Proceed to payment and use test cart 4111 1111 1111 1111
+   * After the order is placed navigate to the [Account Area > Manage Subscriptions](https://snow-lion.bolddemos.ninja/manage-subscriptions/) to view your subscription.
 
 ## Dependencies/Prerequisites
 * Node >= v14.
@@ -27,14 +33,8 @@
 - This example is using the Braintree Sandbox environment which can be updated to production within the .env file. 
     - Please see the sample-env for more details.
     - [Making API Calls with Braintree](https://graphql.braintreepayments.com/guides/making_api_calls/)
-- Demo store:
-   * [Demo Subscription Items](https://snow-lion.bolddemos.ninja/supplies/)
-   * Add an item to cart & proceed to checkout
-   * If you have a subscription item in cart it will ask you to first create an account during checkout.
-   * Proceed to payment and use test cart 4111 1111 1111 1111
-   * After the order is placed navigate to the [Account Area > Manage Subscriptions](https://snow-lion.bolddemos.ninja/manage-subscriptions/) to view your subscription.
+
 - <img src="/api.svg">
-- <img src="/checkout-js.png">
 
 ## Configuration
 1. Platform Configuration
