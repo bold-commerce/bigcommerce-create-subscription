@@ -38,12 +38,13 @@ class NewOrderController {
 
             // get bigcommerce order data
             const order: BigCommerceOrder = await this.bcOrders.getOrder(orderId);
+
             if (!order || !order?.customer_message?.includes('bold_subscriptions')) {
                 return { error: '1. no order found, or no subscription items found on this order', status: 422 };
             }
 
             // filter payment transaction data
-            const paymentTransaction = await this.payments.handlePayments(orderTransaction.payment_method_id, orderId, transactionId);
+            const paymentTransaction = await this.payments.handlePayments(orderTransaction.payment_method_id, orderId, order.payment_provider_id);
 
             if (paymentTransaction?.error
                 || !paymentTransaction
@@ -67,7 +68,7 @@ class NewOrderController {
                         subItems,
                         shippingAddress,
                         billingAddress,
-                        transactionId,
+                        order.payment_provider_id,
                         paymentTransaction.gateway_name,
                         paymentTransaction.token,
                     ),

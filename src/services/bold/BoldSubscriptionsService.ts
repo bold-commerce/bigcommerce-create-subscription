@@ -1,4 +1,3 @@
-import { Transaction } from '../braintree/schema';
 import BoldApiClient from '../../clients/BoldApiClient';
 import { BigCommerceOrder } from '../bigcommerce/schema';
 import { isAxiosError } from '../../helpers/axios';

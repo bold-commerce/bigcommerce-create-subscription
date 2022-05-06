@@ -29,7 +29,7 @@ class BigCommerceOrdersService {
     async getOrderTransaction(orderId: number, transactionId: string) {
         const bcTransactionResult = bigCSchema.orderTransactionsResponse.parse(await this.bc3.get(`/orders/${orderId}/transactions`));
         const bcTransaction = bcTransactionResult.data
-            .find(data => data && data.gateway_transaction_id === transactionId);
+            .find(data => data && data.gateway_transaction_id.includes(transactionId));
 
         if (!bcTransaction
             || bcTransaction.status !== 'ok'
