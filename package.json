@@ -36,7 +36,6 @@
     "jest": "^27.5.1",
     "jsonwebtoken": "^8.5.1",
     "node-bigcommerce": "^4.1.0",
-    "nodemon": "^2.0.15",
     "stripe": "^8.209.0",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.3",
