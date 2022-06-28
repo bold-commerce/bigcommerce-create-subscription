@@ -3,7 +3,6 @@
   "description": "Node App",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint --fix . --ext .ts",
