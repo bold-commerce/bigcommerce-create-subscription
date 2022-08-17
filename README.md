@@ -2,46 +2,15 @@
 
 This sample app demonstrates how to [Programmatically Create Subscriptions](https://developer.boldcommerce.com/default/guides/subscriptions-v2/create-subscription) with the Bold Commerce Subscriptions API.
 
-This project uses a checkout frontend based on the [BigCommerce OS Checkout](https://github.com/bigcommerce/checkout-js).
-
-## Demo store
-
-Bold provides a [demo store](https://snow-lion.bolddemos.ninja/supplies/) that allows you to see this example in action before getting started. Use the following steps to observe the functionality that this example enables:
-
-1. [Visit the store](https://snow-lion.bolddemos.ninja/supplies/).
-2. Visit a product page, and select **Subscribe to this product today!** Configure the order frequency, and add the product to your cart.
-3. Click **Proceed to checkout**.
-4. Since you have a subscription item in cart, the store prompts you to create an account. Create an account with sample customer and shipping information.
-5. Use 4111 1111 1111 1111 for the credit card number. Use any name, CVV, and expiration date (in the future).
-6. After you place the order, navigate to the [Manage Subscriptions page](https://snow-lion.bolddemos.ninja/manage-subscriptions/) to view your subscription.
+This project uses a custom checkout frontend based on the [BigCommerce OS Checkout](https://github.com/bigcommerce/checkout-js).
 
 ## Dependencies/Prerequisites
 
+- Custom BigCommerce Checkout to add Bold Subscription meta data into checkout.
 - A BigCommerce account and API credentials.
 - A BoldCommerce account and API credentials.
 - Node.js, version 14 or later.
 - NPM, version 6 or later.
-
-## Installation and Configuration
-
-Use the following steps to set up and configure the project.
-
-### Account Configuration
-
-Use the following steps to configure your accounts:
-
-1. [Install Bold Checkout & Bold Subscriptions on BigCommerce](https://www.bigcommerce.com/apps/bold-subscriptions/).
-2. Download and save the [Bold custom checkout JavaScript file](https://storage.googleapis.com/bold-sales-demos.appspot.com/dist/auto-loader.js).
-3. Use the same Braintree Credentials in both the [Bold Checkout App](https://www.bigcommerce.com/apps/bold-checkout/) and the BigCommerce Payments area. In the BigCommerce admin, navigate to **Store Setup** >> **Payments** >> **Braintree**.
-   1. Enable **Stored Credit Cards with Braintree**.
-   2. Disable **Required CVV when using a stored credit card**.
-   3. Enable **PayPal & Enable Stored PayPal Account**.
-4. Enable the BoldCommerce custom checkout frontend on your store. In the BigCommerce admin, navigate to **Advanced Settings** >> **Checkout**.
-   1. Under **Checkout Type**, select **Custom Checkout**.
-   2. Under **Custom Checkout Settings** in the **Script URL** field, enter the following url: `https://storage.googleapis.com/bold-sales-demos.appspot.com/dist/auto-loader.js`. This custom checkout is based on the [BigCommerce Optimized One-Page Checkout](https://github.com/bigcommerce/checkout-js) and includes frontend tweaks to enable Bold Subscriptions.
-   3. Enable the **This checkout supports Optimized One-Page Checkout Settings** setting.
-   4. Under **Optimized One-Page Checkout Settings** >> **Order**, disable the **Allow customers to enter comments with their order** setting.
-   5. Save your changes.
 
 ### Installation
 
@@ -98,9 +67,18 @@ Use the following steps to ensure that the project is set up correctly:
 - This example is using the Braintree Sandbox environment, which can be updated to production within the `.env` file.
   - Please see the `sample-env` file for more details.
 
-* <img src="/api.svg">
-
 ## Additional Documentation:
 
 - [Programmatically Create Subscriptions](https://developer.boldcommerce.com/default/guides/subscriptions-v2/create-subscription)
 - [Making API Calls with Braintree](https://graphql.braintreepayments.com/guides/making_api_calls/)
+
+## Demo store
+
+Bold provides a [demo store](https://snow-lion.bolddemos.ninja/supplies/) that allows you to see this example in action before getting started. Use the following steps to observe the functionality that this example enables:
+
+1. [Visit the store](https://snow-lion.bolddemos.ninja/supplies/).
+2. Visit a product page, and select **Subscribe to this product today!** Configure the order frequency, and add the product to your cart.
+3. Click **Proceed to checkout**.
+4. Since you have a subscription item in cart, the store prompts you to create an account. Create an account with sample customer and shipping information.
+5. Use 4111 1111 1111 1111 for the credit card number. Use any name, CVV, and expiration date (in the future).
+6. After you place the order, navigate to the [Manage Subscriptions page](https://snow-lion.bolddemos.ninja/manage-subscriptions/) to view your subscription.
