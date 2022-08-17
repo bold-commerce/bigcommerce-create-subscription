@@ -7,6 +7,7 @@ This project uses a custom checkout frontend based on the [BigCommerce OS Checko
 ## Dependencies/Prerequisites
 
 - Custom BigCommerce Checkout to add Bold Subscription meta data into checkout.
+- A Payment Gateway Account and API credentials [Braintre, Stripe, Authorize.net]
 - A BigCommerce account and API credentials.
 - A BoldCommerce account and API credentials.
 - Node.js, version 14 or later.
